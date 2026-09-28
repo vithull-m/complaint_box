@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: html_head('Staff & Warden')}"></head>
+<body>
+    <div th:replace="~{fragments/header :: navbar('staff')}"></div>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Staff & Warden Directory</h1>
+                <p class="page-subtitle">Manage maintenance staff and hostel wardens</p>
+            </div>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+        <div style="display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; align-items: start;">
+            <!-- Staff Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Staff Members</h2>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="s : ${staffList}">
+                                <td th:text="'#' + ${s.id}">#1</td>
+                                <td style="font-weight: 600;" th:text="${s.name}">David Electrician</td>
+                                <td th:text="${s.email}">david@hostel.edu</td>
+                                <td>
+                                    <span class="badge" 
+                                          th:classappend="${s.role.name() == 'WARDEN' ? 'badge-in_progress' : 'badge-role'}"
+                                          th:text="${s.role}">STAFF</span>
+                                </td>
+                                <td>
+                                    <form th:action="@{/staff/{id}/delete(id=${s.id})}" method="POST" style="display: inline;"
+                                          onsubmit="return confirm('Delete this staff member?');">
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(staffList)}">
+                                <td colspan="5">
+                                    <div class="empty-state">
+                                        <div class="empty-state-icon">👷</div>
+                                        <p>No staff or wardens registered yet.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Add Staff Form -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Add Staff / Warden</h2>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/staff/new}" method="POST">
+                        <div class="form-group">
+                            <label class="form-label" for="name">Full Name *</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="e.g. David Smith" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email Address *</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="david@hostel.edu" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="role">Role *</label>
+                            <select class="form-select" id="role" name="role" required>
+                                <option value="STAFF" selected>STAFF (Technician / Electrician / Plumber)</option>
+                                <option value="WARDEN">WARDEN (Hostel Administrator)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Save Staff Member</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

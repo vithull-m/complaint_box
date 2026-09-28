@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="html_head(pageTitle)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Hostel Complaint Tracker'">Hostel Complaint Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar" th:fragment="navbar(activeTab)">
+        <div class="nav-container">
+            <a th:href="@{/}" class="brand">
+                <div class="brand-icon">📦</div>
+                <span>Hostel Complaints</span>
+            </a>
+            <ul class="nav-links">
+                <li><a th:href="@{/}" class="nav-link" th:classappend="${activeTab == 'dashboard'} ? 'active' : ''">Dashboard</a></li>
+                <li><a th:href="@{/complaints/new}" class="nav-link" th:classappend="${activeTab == 'new-complaint'} ? 'active' : ''">Submit Complaint</a></li>
+                <li><a th:href="@{/residents}" class="nav-link" th:classappend="${activeTab == 'residents'} ? 'active' : ''">Residents</a></li>
+                <li><a th:href="@{/categories}" class="nav-link" th:classappend="${activeTab == 'categories'} ? 'active' : ''">Categories</a></li>
+                <li><a th:href="@{/staff}" class="nav-link" th:classappend="${activeTab == 'staff'} ? 'active' : ''">Staff & Warden</a></li>
+            </ul>
+        </div>
+    </nav>
+</body>
+</html>

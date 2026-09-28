@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: html_head('Dashboard')}"></head>
+<body>
+    <div th:replace="~{fragments/header :: navbar('dashboard')}"></div>
+
+    <main class="main-content">
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Maintenance Dashboard</h1>
+                <p class="page-subtitle">Track, assign, and resolve hostel maintenance requests</p>
+            </div>
+            <a th:href="@{/complaints/new}" class="btn btn-primary">+ Submit Complaint</a>
+        </div>
+
+        <!-- Metric Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon total">📋</div>
+                <div>
+                    <div class="stat-value" th:text="${totalCount}">0</div>
+                    <div class="stat-label">Total Complaints</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon open">⏳</div>
+                <div>
+                    <div class="stat-value" th:text="${openCount}">0</div>
+                    <div class="stat-label">Open Complaints</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon progress">⚙️</div>
+                <div>
+                    <div class="stat-value" th:text="${inProgressCount}">0</div>
+                    <div class="stat-label">In Progress</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon resolved">✅</div>
+                <div>
+                    <div class="stat-value" th:text="${resolvedCount}">0</div>
+                    <div class="stat-label">Resolved</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon overdue">⚠️</div>
+                <div>
+                    <div class="stat-value" th:text="${overdueCount}">0</div>
+                    <div class="stat-label">Overdue (>5 Days)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Complaints Table Card -->
+        <div class="card">
+            <div class="filter-tabs">
+                <a th:href="@{/(filter='all')}" class="filter-tab" th:classappend="${filter == 'all' or filter == null} ? 'active' : ''">All Complaints</a>
+                <a th:href="@{/(filter='open')}" class="filter-tab" th:classappend="${filter == 'open'} ? 'active' : ''">Open Only</a>
+                <a th:href="@{/(filter='overdue')}" class="filter-tab" th:classappend="${filter == 'overdue'} ? 'active' : ''">Overdue Only</a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Status</th>
+                            <th>Room</th>
+                            <th>Resident</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Assigned Staff</th>
+                            <th>Date Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="complaint : ${complaints}">
+                            <td th:text="'#' + ${complaint.id}">#1</td>
+                            <td>
+                                <span class="badge" 
+                                      th:classappend="${complaint.status.name() == 'OPEN' ? 'badge-open' : (complaint.status.name() == 'IN_PROGRESS' ? 'badge-in_progress' : 'badge-resolved')}"
+                                      th:text="${complaint.status}">OPEN</span>
+                                <span th:if="${complaint.overdue}" class="badge badge-overdue">OVERDUE</span>
+                            </td>
+                            <td style="font-weight: 600;" th:text="${complaint.roomNumber}">101</td>
+                            <td th:text="${complaint.resident.name}">John Doe</td>
+                            <td><span class="badge badge-role" th:text="${complaint.category.name}">Plumbing</span></td>
+                            <td th:text="${complaint.description}" style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Leaking tap</td>
+                            <td>
+                                <span th:if="${complaint.assignedStaff != null}" th:text="${complaint.assignedStaff.name}">Staff Name</span>
+                                <span th:if="${complaint.assignedStaff == null}" style="color: var(--text-light); font-style: italic;">Unassigned</span>
+                            </td>
+                            <td th:text="${complaint.createdAt != null ? #temporals.format(complaint.createdAt, 'dd MMM yyyy HH:mm') : '-'}">28 Sep 2026</td>
+                            <td>
+                                <a th:href="@{/complaints/{id}(id=${complaint.id})}" class="btn btn-secondary btn-sm">Manage</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(complaints)}">
+                            <td colspan="9">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">📭</div>
+                                    <p>No complaints found matching this filter.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

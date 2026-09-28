@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: html_head('Submit Complaint')}"></head>
+<body>
+    <div th:replace="~{fragments/header :: navbar('new-complaint')}"></div>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Submit Maintenance Complaint</h1>
+                <p class="page-subtitle">Report a maintenance issue in your hostel room</p>
+            </div>
+            <a th:href="@{/}" class="btn btn-secondary">&larr; Back to Dashboard</a>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+        <div class="card" style="max-width: 700px; margin: 0 auto;">
+            <div class="card-header">
+                <h2 class="card-title">Complaint Form</h2>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/complaints/new}" method="POST">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="residentId">Resident / Student *</label>
+                            <select class="form-select" id="residentId" name="residentId" required>
+                                <option value="" disabled selected>-- Select Resident --</option>
+                                <option th:each="res : ${residents}" 
+                                        th:value="${res.id}" 
+                                        th:text="${res.name + ' (Room ' + res.roomNumber + ')'}">John Doe</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="categoryId">Category *</label>
+                            <select class="form-select" id="categoryId" name="categoryId" required>
+                                <option value="" disabled selected>-- Select Category --</option>
+                                <option th:each="cat : ${categories}" 
+                                        th:value="${cat.id}" 
+                                        th:text="${cat.name}">Electrical</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="roomNumber">Room Number *</label>
+                        <input type="text" class="form-control" id="roomNumber" name="roomNumber" placeholder="e.g. A-102" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="description">Issue Description *</label>
+                        <textarea class="form-textarea" id="description" name="description" rows="4" 
+                                  placeholder="Describe the maintenance issue clearly..." required></textarea>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                        <a th:href="@{/}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Submit Complaint</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
